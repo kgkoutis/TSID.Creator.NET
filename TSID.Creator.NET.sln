@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSID.Creator.NET", "TSID.Creator.NET\TSID.Creator.NET.csproj", "{365ABEB7-34B6-4FC9-AB83-99DC960A8568}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0F98F625-A063-43F5-AB8B-2C7A86437E71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tsid", "src\tsid\tsid.csproj", "{4DFCA2D4-7F94-495C-BF9C-94F54FAFE619}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,13 +10,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{365ABEB7-34B6-4FC9-AB83-99DC960A8568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{365ABEB7-34B6-4FC9-AB83-99DC960A8568}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{365ABEB7-34B6-4FC9-AB83-99DC960A8568}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{365ABEB7-34B6-4FC9-AB83-99DC960A8568}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20597C94-B4CF-4111-9700-AB5F5E03A4FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{20597C94-B4CF-4111-9700-AB5F5E03A4FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20597C94-B4CF-4111-9700-AB5F5E03A4FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20597C94-B4CF-4111-9700-AB5F5E03A4FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DFCA2D4-7F94-495C-BF9C-94F54FAFE619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DFCA2D4-7F94-495C-BF9C-94F54FAFE619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DFCA2D4-7F94-495C-BF9C-94F54FAFE619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DFCA2D4-7F94-495C-BF9C-94F54FAFE619}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4DFCA2D4-7F94-495C-BF9C-94F54FAFE619} = {0F98F625-A063-43F5-AB8B-2C7A86437E71}
 	EndGlobalSection
 EndGlobal
