@@ -22,7 +22,7 @@ public class RandomGenerators
     private readonly RandomNumberGenerator _cryptographicallySecureRandomNumberGenerator;
     private readonly Random _insecureRandomNumberGenerator;
     protected RandomGenerators(RandomNumberGenerator rng) => _cryptographicallySecureRandomNumberGenerator = rng;
-    protected RandomGenerators() => _insecureRandomNumberGenerator = new Random();
+    protected RandomGenerators() => _insecureRandomNumberGenerator = Random.Shared;
     
     public RandomNumberGenerator GetCryptographicallySecureRandomNumberGeneratorOrThrow()
     {
@@ -48,10 +48,13 @@ public class RandomGenerators
     {
         if (IsCryptographicallySecure())
         {
-            var randomNumber = new byte[32];
-            var rng = GetCryptographicallySecureRandomNumberGeneratorOrThrow();
-            rng.GetBytes(randomNumber);
-            return BitConverter.ToInt32(randomNumber, 0);
+            // var randomNumber = new byte[32];
+            // var rng = GetCryptographicallySecureRandomNumberGeneratorOrThrow();
+            // rng.GetBytes(randomNumber);
+            // return BitConverter.ToInt32(randomNumber, 0);
+
+            // This method is static so it's common for all overriders of RandomNumberGenerator
+            return RandomNumberGenerator.GetInt32(int.MaxValue); 
         }
         
         return GetSimpleRandomNumberGeneratorOrThrow().Next();

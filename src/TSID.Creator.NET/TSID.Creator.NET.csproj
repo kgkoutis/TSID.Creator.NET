@@ -5,6 +5,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <RootNamespace>TSID.Creator.NET</RootNamespace>
+        <AssemblyName>TSID.Creator.NET</AssemblyName>
     </PropertyGroup>
-
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="TSID.Creator.NET.Tests.Unit" />
+    </ItemGroup>
 </Project>

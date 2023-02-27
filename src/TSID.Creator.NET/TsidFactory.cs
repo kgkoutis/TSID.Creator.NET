@@ -1,4 +1,6 @@
-﻿namespace TSID.Creator.NET;
+﻿using System.Diagnostics;
+
+namespace TSID.Creator.NET;
 
 ///<summary>
 /// A factory that actually generates Time-Sorted Unique Identifiers (TSID).
@@ -43,15 +45,15 @@ public sealed class TsidFactory
     private readonly int _nodeMask;
     private readonly int _counterMask;
 
-    private readonly DateTime _clock;
+    private readonly Clock _clock;
     private readonly long _customEpoch;
 
     private readonly IRandom _random;
     private readonly int _randomBytes;
 
-    private const int NodeBits256 = 8;
-    private const int NodeBits1024 = 10;
-    private const int NodeBits4096 = 12;
+    internal const int NodeBits256 = 8;
+    internal const int NodeBits1024 = 10;
+    internal const int NodeBits4096 = 12;
 
     private readonly object _lock = new object();
     private readonly object _lock2 = new object();
@@ -116,7 +118,9 @@ public sealed class TsidFactory
         _node = builder.GetNode() & _nodeMask;
 
         // finally, initialize internal state
-        _lastTime = _clock.ToUnixTimeMilliseconds();
+        _lastTime = _clock.FrozenMilliSeconds ?? 
+                    DateTimeOffset.UtcNow.ToOffset(_clock.TimeZoneInfo.BaseUtcOffset).ToUnixTimeMilliseconds();
+        
         _counter = GetRandomCounter();
     }
 
@@ -201,8 +205,10 @@ public sealed class TsidFactory
             var time = GetTime() << Tsid.RandomBits;
             var node = (long)_node << _counterBits;
             var counter = (long)_counter & _counterMask;
-            
-            return new Tsid(time | node | counter);
+
+            var number = time | node | counter;
+            // Debug.Assert(number >= 0, "number is negative: " + number);
+            return new Tsid(number);
         }
     }
 
@@ -223,7 +229,9 @@ public sealed class TsidFactory
     /// </summary>
     private long GetTime()
     {
-        var time = _clock.ToUnixTimeMilliseconds();
+        var time  = _clock.FrozenMilliSeconds ?? 
+                    DateTimeOffset.UtcNow.ToOffset(_clock.TimeZoneInfo.BaseUtcOffset).ToUnixTimeMilliseconds();
+
         if (time <= _lastTime)
         {
             _counter++;
@@ -311,7 +319,7 @@ public sealed class TsidFactory
         private int? _nodeBits;
         private long? _customEpoch;
         private IRandom _random;
-        private DateTime? _clock;
+        private Clock _clock;
 
         public Builder WithNode(int node)
         {
@@ -325,7 +333,7 @@ public sealed class TsidFactory
             return this;
         }
 
-        public Builder WithCustomEpoch(DateTime customEpoch)
+        public Builder WithCustomEpoch(DateTimeOffset customEpoch)
         {
             _customEpoch = customEpoch.ToUnixTimeMilliseconds();
             return this;
@@ -360,7 +368,7 @@ public sealed class TsidFactory
             return this;
         }
 
-        public Builder WithClock(DateTime clock)
+        public Builder WithClock(Clock clock)
         {
             _clock = clock;
             return this;
@@ -451,16 +459,16 @@ public sealed class TsidFactory
 
         /// <summary>
         /// Gets the clock to be used in tests.
-        /// <returns> a clock of type <see cref="DateTime"/> </returns>
+        /// <returns> a clock of type <see cref="Clock"/> </returns>
         /// </summary>
-        public DateTime GetClock()
+        public Clock GetClock()
         {
             if (_clock == null)
             {
-                WithClock(DateTime.UtcNow);
+                WithClock(new Clock(TimeZoneInfo.Utc));
             }
 
-            return (DateTime)_clock;
+            return _clock;
         }
 
         /// <summary>
@@ -482,7 +490,7 @@ public sealed class TsidFactory
         public byte[] NextBytes(int length);
     }
 
-    private class IntRandom : IRandom
+    internal class IntRandom : IRandom
     {
         private readonly Func<int> _randomFunction;
 
@@ -490,13 +498,13 @@ public sealed class TsidFactory
         {
         }
 
-        public IntRandom(RandomGenerators random) : this(newRandomFunction(random))
+        public IntRandom(RandomGenerators random) : this(NewRandomFunction(random))
         {
         }
 
         public IntRandom(Func<int> randomFunction)
         {
-            _randomFunction = randomFunction ?? newRandomFunction(null);
+            _randomFunction = randomFunction ?? NewRandomFunction(null);
         }
 
         public int NextInt()
@@ -525,14 +533,14 @@ public sealed class TsidFactory
             return bytes;
         }
 
-        private static Func<int> newRandomFunction(RandomGenerators randoms)
+        private static Func<int> NewRandomFunction(RandomGenerators randoms)
         {
             var entropy = randoms ?? RandomGenerators.OfCryptographicallySecureRandom();
             return () => entropy.NextInt();
         }
     }
 
-    private class ByteRandom : IRandom
+    internal class ByteRandom : IRandom
     {
         private readonly Func<int, byte[]> _randomFunction;
 
@@ -573,15 +581,11 @@ public sealed class TsidFactory
         }
     }
 
-    private class Settings
+    internal static class Settings
     {
-        private const string Node = "tsidcreator.node";
-        private const string NodeCount = "tsidcreator.node.count";
-
-        private Settings()
-        {
-        }
-
+        public const string Node = "tsidcreator.node";
+        public const string NodeCount = "tsidcreator.node.count";
+        
         public static int? GetNode()
         {
             return GetPropertyAsInteger(Node);

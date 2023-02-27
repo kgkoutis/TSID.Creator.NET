@@ -1,14 +1,24 @@
 ﻿using System.Numerics;
 using System.Runtime.Serialization;
+using TSID.Creator.NET.Extensions;
 
 namespace TSID.Creator.NET;
 
 [Serializable]
-public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, IComparable
+public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, IComparable
 {
-	public int CompareTo(Tsid? other)
+	public int CompareTo(Tsid other)
 	{
-		return other == null ? 1 : _number.CompareTo(other._number);
+		// return other == null ? 1 : _number.CompareTo(other._number);
+		long a = _number + long.MinValue;
+		long b = other._number + long.MinValue;
+
+		if (a > b)
+			return 1;
+		else if (a < b)
+			return -1;
+
+		return 0;
 	}
 
 	public int CompareTo(object? obj)
@@ -18,27 +28,27 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 		return obj is Tsid other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(Tsid)}");
 	}
 
-	public static bool operator <(Tsid? left, Tsid? right)
+	public static bool operator <(Tsid left, Tsid right)
 	{
 		return Comparer<Tsid>.Default.Compare(left, right) < 0;
 	}
 
-	public static bool operator >(Tsid? left, Tsid? right)
+	public static bool operator >(Tsid left, Tsid right)
 	{
 		return Comparer<Tsid>.Default.Compare(left, right) > 0;
 	}
 
-	public static bool operator <=(Tsid? left, Tsid? right)
+	public static bool operator <=(Tsid left, Tsid right)
 	{
 		return Comparer<Tsid>.Default.Compare(left, right) <= 0;
 	}
 
-	public static bool operator >=(Tsid? left, Tsid? right)
+	public static bool operator >=(Tsid left, Tsid right)
 	{
 		return Comparer<Tsid>.Default.Compare(left, right) >= 0;
 	}
 
-	public bool Equals(Tsid? other)
+	public bool Equals(Tsid other)
 	{
 		if (other == null)
 			return false;
@@ -58,12 +68,12 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 		return (int) (_number ^ (_number >>> 32));
 	}
 
-	public static bool operator ==(Tsid? left, Tsid? right)
+	public static bool operator ==(Tsid left, Tsid right)
 	{
 		return Equals(left, right);
 	}
 
-	public static bool operator !=(Tsid? left, Tsid? right)
+	public static bool operator !=(Tsid left, Tsid right)
 	{
 		return !Equals(left, right);
 	}
@@ -345,7 +355,7 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 	/// </summary>
 	public static Tsid Fast()
 	{
-		var time = ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - TsidEpoch) << RandomBits;
+		var time = (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - TsidEpoch) << RandomBits;
 		long tail = LazyHolder.IncrementAndGet() & RandomMask;
 		return new Tsid(time | tail);
 	}
@@ -380,19 +390,19 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 	/// <returns> a string </returns>
 	/// <remarks> see also <a href="https://www.crockford.com/base32.html">Crockford's Base 32</a></remarks>
 	/// </summary>
-	public string ToLowerCase()
+	public string ToLower()
 	{
 		return ToString(AlphabetLowercase);
 	}
 
-	public DateTime GetDateTime()
+	public DateTimeOffset GetDateTimeOffset()
 	{
-		return new DateTime(GetUnixMilliseconds());
+		return DateTimeOffset.FromUnixTimeMilliseconds(GetUnixMilliseconds());
 	}
 
-	public DateTime GetDateTime(DateTime customEpoch)
+	public DateTimeOffset GetDateTimeOffset(DateTimeOffset customEpoch)
 	{
-		return new DateTime(GetUnixMilliseconds(customEpoch.ToUnixTimeMilliseconds()));
+		return DateTimeOffset.FromUnixTimeMilliseconds(GetUnixMilliseconds(customEpoch.ToUnixTimeMilliseconds()));
 	}
 
 	public long GetUnixMilliseconds()
@@ -407,7 +417,7 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 
 	public long GetTime()
 	{
-		return _number >> RandomBits;
+		return _number >>> RandomBits;
 	}
 
 	public long GetRandom()
@@ -415,9 +425,9 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 		return _number & RandomMask;
 	}
 
-	public static bool IsValid(string str)
+	public static bool IsValid(string? str)
 	{
-		return !str.Equals(null) && IsValidCharArray(str.ToCharArray());
+		return str != null && IsValidCharArray(str.ToCharArray());
 	}
 		
 	/// <summary>
@@ -453,16 +463,16 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 	/// </example>
 	/// <para>The output string is left padded with zeros.</para>
 	/// <param name="str"> a base-n encoded string </param>
-	/// <param name="baseInt"> a radix between 2 and 62 </param>
+	/// <param name="@base"> a radix between 2 and 62 </param>
 	/// <returns>a <see cref="Tsid"/> </returns>
 	/// </summary>
-	public static Tsid Decode(string str, int baseInt)
+	public static Tsid Decode(string str, int @base)
 	{
-		if (baseInt < 2 || baseInt > 62)
+		if (@base < 2 || @base > 62)
 		{
-			throw new ArgumentException($"Invalid base: {baseInt}");
+			throw new ArgumentException($"Invalid base: {@base}");
 		}
-		return BaseN.Decode(str, baseInt);
+		return BaseN.Decode(str, @base);
 	}
 
 	/// <summary>
@@ -518,7 +528,7 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 				case 'S': // canonical string in upper case
 					return head + ToString() + tail;
 				case 's': // canonical string in lower case
-					return head + ToLowerCase() + tail;
+					return head + ToLower() + tail;
 				case 'X': // hexadecimal in upper case
 					return head + BaseN.Encode(this, 16) + tail;
 				case 'x': // hexadecimal in lower case
@@ -574,20 +584,21 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 			var length = formatted.Length - head.Length - tail.Length;
 			if (formatted.StartsWith(head) && formatted.EndsWith(tail))
 			{
+				var subStr = formatted.Substring(i, length);
 				switch (placeholder)
 				{
 					case 'S': // canonical string (case insensitive)
-						return From(formatted.Substring(i, i + length));
+						return From(subStr);
 					case 's': // canonical string (case insensitive)
-						return From(formatted.Substring(i, i + length));
+						return From(subStr);
 					case 'X': // hexadecimal (case insensitive)
-						return BaseN.Decode(formatted.Substring(i, i + length).ToUpper(), 16);
+						return BaseN.Decode(subStr.ToUpper(), 16);
 					case 'x': // hexadecimal (case insensitive)
-						return BaseN.Decode(formatted.Substring(i, i + length).ToUpper(), 16);
+						return BaseN.Decode(subStr.ToUpper(), 16);
 					case 'd': // base-10
-						return BaseN.Decode(formatted.Substring(i, i + length), 10);
+						return BaseN.Decode(subStr, 10);
 					case 'z': // base-62
-						return BaseN.Decode(formatted.Substring(i, i + length), 62);
+						return BaseN.Decode(subStr, 62);
 					default:
 						throw new ArgumentException($"Invalid placeholder: \"%%{placeholder}\"");
 				}
@@ -601,18 +612,18 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 	{
 		var chars = new char[TsidChars];
 
-		chars[0x00] = alphabet[(int)((_number >> 60) & 0b11111)];
-		chars[0x01] = alphabet[(int)((_number >> 55) & 0b11111)];
-		chars[0x02] = alphabet[(int)((_number >> 50) & 0b11111)];
-		chars[0x03] = alphabet[(int)((_number >> 45) & 0b11111)];
-		chars[0x04] = alphabet[(int)((_number >> 40) & 0b11111)];
-		chars[0x05] = alphabet[(int)((_number >> 35) & 0b11111)];
-		chars[0x06] = alphabet[(int)((_number >> 30) & 0b11111)];
-		chars[0x07] = alphabet[(int)((_number >> 25) & 0b11111)];
-		chars[0x08] = alphabet[(int)((_number >> 20) & 0b11111)];
-		chars[0x09] = alphabet[(int)((_number >> 15) & 0b11111)];
-		chars[0x0a] = alphabet[(int)((_number >> 10) & 0b11111)];
-		chars[0x0b] = alphabet[(int)((_number >> 5) & 0b11111)];
+		chars[0x00] = alphabet[(int)((_number >>> 60) & 0b11111)];
+		chars[0x01] = alphabet[(int)((_number >>> 55) & 0b11111)];
+		chars[0x02] = alphabet[(int)((_number >>> 50) & 0b11111)];
+		chars[0x03] = alphabet[(int)((_number >>> 45) & 0b11111)];
+		chars[0x04] = alphabet[(int)((_number >>> 40) & 0b11111)];
+		chars[0x05] = alphabet[(int)((_number >>> 35) & 0b11111)];
+		chars[0x06] = alphabet[(int)((_number >>> 30) & 0b11111)];
+		chars[0x07] = alphabet[(int)((_number >>> 25) & 0b11111)];
+		chars[0x08] = alphabet[(int)((_number >>> 20) & 0b11111)];
+		chars[0x09] = alphabet[(int)((_number >>> 15) & 0b11111)];
+		chars[0x0a] = alphabet[(int)((_number >>> 10) & 0b11111)];
+		chars[0x0b] = alphabet[(int)((_number >>> 5) & 0b11111)];
 		chars[0x0c] = alphabet[(int)(_number & 0b11111)];
 
 		return new string(chars);
@@ -651,68 +662,71 @@ public sealed class Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, I
 	}
 
 
-	private static class BaseN
+	public static class BaseN
 	{
-		private static readonly BigInteger MAX = BigInteger.Parse("18446744073709551616");
-		private static readonly string ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; // base-62
+		private static readonly BigInteger Max = BigInteger.Parse("18446744073709551616");
+		private const string Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; // base-62
 
-		public static string Encode(Tsid tsid, int baseInt)
+		public static string Encode(Tsid tsid, int @base)
 		{
-			var x = new BigInteger(tsid.ToBytes());
-			var radix = BigInteger.Parse(baseInt.ToString());
-			var length = (int)Math.Ceiling(64 / (Math.Log(baseInt) / Math.Log(2)));
+			const int longSize = 64;
+			var x =  new BigInteger(tsid.ToBytes(), true, true);
+			var radix = BigInteger.Parse(@base.ToString());
+			var length = (int)Math.Ceiling(longSize / (Math.Log(@base) / Math.Log(2)));
 			var b = length;
 			var buffer = new char[length];
 			while (x.CompareTo(BigInteger.Zero) > 0)
 			{
 				var (quotient, remainder) = BigInteger.DivRem(x, radix);
-				buffer[--b] = ALPHABET[Convert.ToInt32(remainder)];
+				buffer[--b] = Alphabet[remainder.ToIntValueJavaStyle()];
 				x = quotient;
 			}
-			while (b > 0)
-			{
+			while (b > 0) 
 				buffer[--b] = '0';
-			}
 			return new string(buffer);
 		}
 
-		public static Tsid Decode(string str, int baseInt)
+		public static Tsid Decode(string str, int @base)
 		{
 			var x = BigInteger.Zero;
-			var radix = BigInteger.Parse(baseInt.ToString());
-			var length = (int)Math.Ceiling(64 / (Math.Log(baseInt) / Math.Log(2)));
+			var length = (int)Math.Ceiling(64 / (Math.Log(@base) / Math.Log(2)));
 			if (str == null)
 			{
-				throw new ArgumentException($"Invalid base-{baseInt} string: null");
+				throw new ArgumentException($"Invalid base-{@base} string: null");
 			}
 			if (str.Length != length)
 			{
-				throw new ArgumentException($"Invalid base-{baseInt} length: {str.Length}");
+				throw new ArgumentException($"Invalid base-{@base} length: {str.Length}");
 			}
 			for (var i = 0; i < str.Length; i++)
 			{
-				long plus = ALPHABET.IndexOf(str[i]);
-				if (plus < 0 || plus >= baseInt)
+				long plus = Alphabet.IndexOf(str[i]);
+				if (plus < 0 || plus >= @base)
 				{
-					throw new ArgumentException($"Invalid base-{baseInt} character: {str[i]}");
+					throw new ArgumentException($"Invalid base-{@base} character: {str[i]}");
 				}
-				x = BigInteger.Add(BigInteger.Multiply(x,radix),BigInteger.Parse(plus.ToString()));
+
+				// x = BigInteger.Add(BigInteger.Multiply(x,radix),BigInteger.Parse(plus.ToString()));
+				x = x * @base + new BigInteger(plus);
 			}
-			if (x.CompareTo(MAX) > 0)
+			if (x.CompareTo(Max) > 0)
 			{
-				throw new ArgumentException($"Invalid base-{baseInt} value (overflow): {x}");
+				throw new ArgumentException($"Invalid base-{@base} value (overflow): {x}");
 			}
-			return new Tsid(Convert.ToInt32(x));
+			
+			var number = x.ToLongValueJavaStyle();
+			
+			return new Tsid(number);
 		}
 	}
 
 	private static class LazyHolder
 	{
-		private static int counter = new Random().Next();
+		private static int _counter = Random.Shared.Next();
 
 		public static int IncrementAndGet()
 		{
-			return Interlocked.Increment(ref counter);
+			return Interlocked.Increment(ref _counter);
 		}
 	}
 }
