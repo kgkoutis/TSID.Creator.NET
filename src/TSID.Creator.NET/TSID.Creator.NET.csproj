@@ -5,11 +5,33 @@
         <Nullable>disable</Nullable>
         <RootNamespace>TSID.Creator.NET</RootNamespace>
         <AssemblyName>TSID.Creator.NET</AssemblyName>
+		<Authors>Kostas Gkoutis</Authors>
+		<Description>A .NET library for generating Time-Sorted Unique Identifiers (TSID).</Description>
         <LangVersion>11</LangVersion>
+		<PackageId>TSID.Creator.NET</PackageId>
+		<PackageVersion>1.0.0</PackageVersion>
+		<Product>TSID Creator .NET</Product>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <Title>TSID Creator .NET</Title>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <RepositoryUrl>https://github.com/kgkoutis/TSID.Creator.NET</RepositoryUrl>
+        <PackageTags>id, snowflake, ulid, twitter-snowflake, unique-id, identifier, sonyflake, flake, shortid, primary-key, time-sorted-id, id-generator, snowflake-twitter, snowflake-csharp, tsid</PackageTags>
+        <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     </PropertyGroup>
     
     <ItemGroup>
         <InternalsVisibleTo Include="TSID.Creator.NET.Tests.Unit" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <None Include="..\..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+      <None Include="..\..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
 </Project>
