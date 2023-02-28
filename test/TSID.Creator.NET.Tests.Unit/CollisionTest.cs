@@ -15,26 +15,26 @@ public class CollisionTest
     [Fact]
     public void TestCollision()
     {
-        int nodeBits = 8;
-        int threadCount = 16;
-        int iterationCount = 100_000;
+        var nodeBits = 8;
+        var threadCount = 16;
+        var iterationCount = 100_000;
 
-        int clashes = 0;
-        CountDownLatch endLatch = new CountDownLatch(threadCount);
+        var clashes = 0;
+        var endLatch = new CountDownLatch(threadCount);
         var tsidMap = new ConcurrentDictionary<long, int>();
 
         // one generator shared by ALL THREADS
-        TsidFactory factory = NewFactory(nodeBits);
+        var factory = NewFactory(nodeBits);
 
-        for (int i = 0; i < threadCount; i++)
+        for (var i = 0; i < threadCount; i++)
         {
-            int threadId = i;
+            var threadId = i;
 
             new Thread(() =>
             {
-                for (int j = 0; j < iterationCount; j++)
+                for (var j = 0; j < iterationCount; j++)
                 {
-                    long tsid = factory.Create().ToLong();
+                    var tsid = factory.Create().ToLong();
                     if (tsidMap.ContainsKey(tsid))
                     {
                         Interlocked.Increment(ref clashes);

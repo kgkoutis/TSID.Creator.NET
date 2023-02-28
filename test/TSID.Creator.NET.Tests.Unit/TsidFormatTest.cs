@@ -9,15 +9,11 @@ public class TsidFormatTest
 
         string[][] str =
         {
-            //
-            new[] { "HEAD", "TAIL" }, //
-            new[] { "HEAD", "" }, //
-            new[] { "", "TAIL" }, //
-            new[] { "", "" } //
+            new[] { "HEAD", "TAIL" },
+            new[] { "HEAD", "" },
+            new[] { "", "TAIL" },
+            new[] { "", "" }
         };
-
-        string format;
-        string formatted;
 
         // '%S': upper case
         for (var i = 0; i < str.Length; i++)
@@ -26,8 +22,8 @@ public class TsidFormatTest
             var tail = str[i][1];
 
             // '%S': canonical string in upper case
-            format = head + "%S" + tail;
-            formatted = head + tsid.ToString() + tail;
+            var format = head + "%S" + tail;
+            var formatted = head + tsid + tail;
             formatted.Should().BeEquivalentTo(tsid.Format(format));
 
             // '%s': canonical string in lower case
@@ -64,15 +60,11 @@ public class TsidFormatTest
 
         string[][] str =
         {
-            //
-            new[] { "HEAD", "TAIL" }, //
-            new[] { "HEAD", "" }, //
-            new[] { "", "TAIL" }, //
-            new[] { "", "" } //
+            new[] { "HEAD", "TAIL" },
+            new[] { "HEAD", "" },
+            new[] { "", "TAIL" },
+            new[] { "", "" }
         };
-
-        string format;
-        string formatted;
 
         for (var i = 0; i < str.Length; i++)
         {
@@ -80,8 +72,8 @@ public class TsidFormatTest
             var tail = str[i][1];
 
             // '%S': canonical string in upper case
-            format = head + "%S" + tail;
-            formatted = head + tsid + tail;
+            var format = head + "%S" + tail;
+            var formatted = head + tsid + tail;
             tsid.Should().BeEquivalentTo(Tsid.Unformat(formatted, format));
 
             // '%s': canonical string in lower case
@@ -123,7 +115,7 @@ public class TsidFormatTest
         }; 
         act.Should().NotThrow<ArgumentException>();
 
-        act = () => { Tsid.Fast().Format((string)null); };
+        act = () => { Tsid.Fast().Format(null); };
         act.Should().Throw<ArgumentException>();
         
         act = () => { Tsid.Fast().Format(""); };
@@ -176,21 +168,17 @@ public class TsidFormatTest
     }
 
     [Fact]
-    public void testFormatAndUnformat()
+    public void TestFormatAndUnformat()
     {
         var tsid = Tsid.Fast();
 
         string[][] str =
         {
-            //
-            new[] { "HEAD", "TAIL" }, //
-            new[] { "HEAD", "" }, //
-            new[] { "", "TAIL" }, //
-            new[] { "", "" } //
+            new[] { "HEAD", "TAIL" },
+            new[] { "HEAD", "" },
+            new[] { "", "TAIL" },
+            new[] { "", "" }
         };
-
-        string format;
-        string formatted;
 
         for (var i = 0; i < str.Length; i++)
         {
@@ -198,8 +186,8 @@ public class TsidFormatTest
             var tail = str[i][1];
 
             // '%S': canonical string in upper case
-            format = head + "%S" + tail;
-            formatted = head + tsid.ToString() + tail;
+            var format = head + "%S" + tail;
+            var formatted = head + tsid + tail;
             formatted.Should().BeEquivalentTo(Tsid.Unformat(formatted, format).Format(format));
             tsid.Should().BeEquivalentTo(Tsid.Unformat(tsid.Format(format), format));
 

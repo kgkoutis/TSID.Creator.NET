@@ -7,19 +7,22 @@ public class IncrementalTest {
     {
         private static readonly DateTimeOffset BeginningOfTime = new DateTimeOffset(DateTime.SpecifyKind(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), DateTimeKind.Utc), TimeSpan.Zero);
 
-        public void IncrementMillis(long millis) {
-            FrozenMilliSeconds = FrozenMilliSeconds + millis;
+        public void IncrementMillis(long millis)
+        {
+            var prev = FrozenMilliSeconds!.Invoke();
+            FrozenMilliSeconds = () => prev + millis;
         }
 
         public void DecrementMillis(long millis) {
-            FrozenMilliSeconds = FrozenMilliSeconds - millis;
+            var prev = FrozenMilliSeconds!.Invoke();
+            FrozenMilliSeconds = () => prev - millis;
         }
 
         public ClockMock() : this(TimeZoneInfo.Utc, BeginningOfTime.ToUnixTimeMilliseconds())
         {
         }
 
-        private ClockMock(TimeZoneInfo timeZoneInfo, long? fixedDateTimeOffset) : base(timeZoneInfo, fixedDateTimeOffset)
+        private ClockMock(TimeZoneInfo timeZoneInfo, long fixedDateTimeOffset) : base(timeZoneInfo, () => fixedDateTimeOffset)
         {
         }
     }
@@ -103,7 +106,7 @@ public class IncrementalTest {
         }
     }
 
-    private void AssertIncremental(Tsid prev, Tsid next) {
+    private static void AssertIncremental(Tsid prev, Tsid next) {
         (prev.ToLong() < next.ToLong()).Should().BeTrue();
     }
 }

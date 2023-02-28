@@ -3,117 +3,108 @@
 namespace TSID.Creator.NET.Tests.Unit;
 
 public class TsidFactory16384Test : TsidFactory00000Test {
+	private const int NodeBits = 14;
+	private const int CounterBits = 8;
 
-	private static readonly int NODE_BITS = 14;
-	private static readonly int COUNTER_BITS = 8;
-
-	private static readonly int NODE_MAX = (int) Math.Pow(2, NODE_BITS);
-	private static readonly int COUNTER_MAX = (int) Math.Pow(2, COUNTER_BITS);
+	private static readonly int NodeMax = (int) Math.Pow(2, NodeBits);
+	private static readonly int CounterMax = (int) Math.Pow(2, CounterBits);
 
 	[Fact]
 	public void TestGetTsid16384()
 	{
-		long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-		TsidFactory factory = TsidFactory.GetBuilder().WithNodeBits(NODE_BITS).WithRandom(random).Build();
+		var factory = TsidFactory.GetBuilder().WithNodeBits(NodeBits).WithRandom(Random).Build();
 
-		long[] list = new long[LOOP_MAX];
-		for (int i = 0; i < LOOP_MAX; i++) {
+		var list = new long[LoopMax];
+		for (var i = 0; i < LoopMax; i++) {
 			list[i] = factory.Create().ToLong();
 		}
 
-		long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
 		CheckNullOrInvalid(list).Should().BeTrue();
 		CheckUniqueness(list).Should().BeTrue();
 		CheckOrdering(list).Should().BeTrue();
-		CheckMaximumPerMs(list, COUNTER_MAX).Should().BeTrue();
+		CheckMaximumPerMs(list, CounterMax).Should().BeTrue();
 		CheckCreationTime(list, startTime, endTime).Should().BeTrue();
 	}
 
 	[Fact]
 	public void TestGetTsid16384WithNode() {
 
-		long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-		int node;
-		do
-		{
-			node = random.NextInt();	
-		} while(node >= NODE_MAX);
+		var node = Random.NextInt(NodeMax);
 		
-		TsidFactory factory = TsidFactory.GetBuilder().WithNode(node).WithNodeBits(NODE_BITS).WithRandom(random).Build();
+		var factory = TsidFactory.GetBuilder().WithNode(node).WithNodeBits(NodeBits).WithRandom(Random).Build();
 
-		long[] list = new long[LOOP_MAX];
-		for (int i = 0; i < LOOP_MAX; i++) {
+		var list = new long[LoopMax];
+		for (var i = 0; i < LoopMax; i++) {
 			list[i] = factory.Create().ToLong();
 		}
 
-		long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
 		CheckNullOrInvalid(list).Should().BeTrue();
 		CheckUniqueness(list).Should().BeTrue();
 		CheckOrdering(list).Should().BeTrue();
-		CheckMaximumPerMs(list, COUNTER_MAX).Should().BeTrue();
+		CheckMaximumPerMs(list, CounterMax).Should().BeTrue();
 		CheckCreationTime(list, startTime, endTime).Should().BeTrue();
 	}
 
 	[Fact]
 	public void TestGetTsidString16384() {
 
-		long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-		TsidFactory factory = TsidFactory.GetBuilder().WithNodeBits(NODE_BITS).WithRandom(random).Build();
+		var factory = TsidFactory.GetBuilder().WithNodeBits(NodeBits).WithRandom(Random).Build();
 
-		string[] list = new string[LOOP_MAX];
-		for (int i = 0; i < LOOP_MAX; i++) {
+		var list = new string[LoopMax];
+		for (var i = 0; i < LoopMax; i++) {
 			list[i] = factory.Create().ToString();
 		}
 
-		long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
 		CheckNullOrInvalid(list).Should().BeTrue();
 		CheckUniqueness(list).Should().BeTrue();
 		CheckOrdering(list).Should().BeTrue();
-		CheckMaximumPerMs(list, COUNTER_MAX).Should().BeTrue();
+		CheckMaximumPerMs(list, CounterMax).Should().BeTrue();
 		CheckCreationTime(list, startTime, endTime).Should().BeTrue();
 	}
 
 	[Fact]
 	public void TestGetTsidString16384WithNode() {
 
-		long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-		int node;
-		do
-		{
-			node = random.NextInt();	
-		} while(node >= NODE_MAX);
+		var node = Random.NextInt(NodeMax);
 		
-		TsidFactory factory = TsidFactory.GetBuilder().WithNode(node).WithNodeBits(NODE_BITS).WithRandom(random).Build();
+		var factory = TsidFactory.GetBuilder().WithNode(node).WithNodeBits(NodeBits).WithRandom(Random).Build();
 
-		string[] list = new string[LOOP_MAX];
-		for (int i = 0; i < LOOP_MAX; i++) {
+		var list = new string[LoopMax];
+		for (var i = 0; i < LoopMax; i++) {
 			list[i] = factory.Create().ToString();
 		}
 
-		long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		var endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
 		CheckNullOrInvalid(list).Should().BeTrue();
 		CheckUniqueness(list).Should().BeTrue();
 		CheckOrdering(list).Should().BeTrue();
-		CheckMaximumPerMs(list, COUNTER_MAX).Should().BeTrue();
+		CheckMaximumPerMs(list, CounterMax).Should().BeTrue();
 		CheckCreationTime(list, startTime, endTime).Should().BeTrue();
 	}
 
 	[Fact]
 	public void TestGetTsid16384Parallel() {
-		ConcurrentDictionary<string, byte>[] sets = new ConcurrentDictionary<string, byte>[MultiplePasses];
-		int counterMax = COUNTER_MAX / MultiplePasses;
+		var sets = new ConcurrentDictionary<string, byte>[MultiplePasses];
+		var counterMax = CounterMax / MultiplePasses;
 		
 		// Instantiate and start many threads
-		for (int i = 0; i < MultiplePasses; i++) {
-			TsidFactory factory = TsidFactory.GetBuilder().WithNode(1).WithNodeBits(NODE_BITS).WithRandom(random).Build();
+		for (var i = 0; i < MultiplePasses; i++) {
+			var factory = TsidFactory.GetBuilder().WithNode(1).WithNodeBits(NodeBits).WithRandom(Random).Build();
 			sets[i] = new ConcurrentDictionary<string, byte>();
 			Parallel.For(0, counterMax, j => {
 				sets[i].TryAdd(factory.Create().ToString(), 0);

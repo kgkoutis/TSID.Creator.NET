@@ -13,7 +13,7 @@ public static class Arrays
 
         var b = new StringBuilder();
         b.Append('[');
-        for (int i = 0; ; i++) {
+        for (var i = 0; ; i++) {
             b.Append(a[i]);
             if (i == iMax)
                 return b.Append(']').ToString();

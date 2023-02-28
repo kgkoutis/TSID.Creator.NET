@@ -3,13 +3,13 @@
 public class Clock
 {
     public TimeZoneInfo TimeZoneInfo { get; }
-    internal long? FrozenMilliSeconds { get; set; } // used for testing
+    internal Func<long> FrozenMilliSeconds { get; set; } // used only for testing
 
     public Clock(TimeZoneInfo timeZoneInfo)
     {
         TimeZoneInfo = timeZoneInfo;
     }
-    internal Clock(TimeZoneInfo timeZoneInfo, long? fixedDateTimeOffset)
+    internal Clock(TimeZoneInfo timeZoneInfo, Func<long> fixedDateTimeOffset)
     {
         TimeZoneInfo = timeZoneInfo;
         FrozenMilliSeconds = fixedDateTimeOffset;

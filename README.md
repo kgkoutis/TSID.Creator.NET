@@ -16,8 +16,6 @@ In summary:
 
 This library is a port of the Java code found [here](https://github.com/f4b6a3/tsid-creator).
 
-It is *still being developed* and is not yet ready for production use.
-
 It is **highly recommended** to consult first the original Java code before using this library, 
 in terms of usage and performance.
 

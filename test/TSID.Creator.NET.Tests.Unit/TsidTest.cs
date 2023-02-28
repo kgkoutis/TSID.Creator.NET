@@ -1,4 +1,3 @@
-using System.Numerics;
 using TSID.Creator.NET.Tests.Unit.Extensions;
 
 namespace TSID.Creator.NET.Tests.Unit;
@@ -335,22 +334,22 @@ public class TsidTest
     [Fact]
     public void TestTsidMax256()
     {
-        int maxTsid = 16384;
-        int maxLoop = 20000;
+        const int maxTsid = 16384;
+        const int maxLoop = 20000;
 
-        Tsid[] list = new Tsid[maxLoop];
+        var list = new Tsid[maxLoop];
 
-        for (int i = 0; i < maxLoop; i++)
+        for (var i = 0; i < maxLoop; i++)
         {
             // can generate up to 16384 per msec
             list[i] = TsidCreator.GetTsid256();
         }
 
-        int n = 0;
+        var n = 0;
         long prevTime = 0;
-        for (int i = 0; i < maxLoop; i++)
+        for (var i = 0; i < maxLoop; i++)
         {
-            long time = list[i].GetTime();
+            var time = list[i].GetTime();
             if (time != prevTime)
             {
                 n = 0;
@@ -365,22 +364,22 @@ public class TsidTest
     [Fact]
     public void TestTsidMax1024()
     {
-        int maxTsid = 4096;
-        int maxLoop = 10000;
+        const int maxTsid = 4096;
+        const int maxLoop = 10000;
 
-        Tsid[] list = new Tsid[maxLoop];
+        var list = new Tsid[maxLoop];
 
-        for (int i = 0; i < maxLoop; i++)
+        for (var i = 0; i < maxLoop; i++)
         {
             // can generate up to 4096 per msec
             list[i] = TsidCreator.GetTsid1024();
         }
 
-        int n = 0;
+        var n = 0;
         long prevTime = 0;
-        for (int i = 0; i < maxLoop; i++)
+        for (var i = 0; i < maxLoop; i++)
         {
-            long time = list[i].GetTime();
+            var time = list[i].GetTime();
             if (time != prevTime)
             {
                 n = 0;
@@ -423,20 +422,20 @@ public class TsidTest
     [Fact]
     public void TestCompareTo()
     {
-        byte[] bytes = new byte[Tsid.TsidBytes];
+        var bytes = new byte[Tsid.TsidBytes];
 
-        for (int i = 0; i < LoopMax; i++)
+        for (var i = 0; i < LoopMax; i++)
         {
             StaticRandom.RandBytes(bytes);
-            Tsid tsid1 = Tsid.From(bytes);
-            long vOut = BitConverter.ToInt64(bytes, 0);
-            BigInteger number1 = new BigInteger(bytes, true, true);
+            var tsid1 = Tsid.From(bytes);
+            var vOut = BitConverter.ToInt64(bytes, 0);
+            var number1 = new BigInteger(bytes, true, true);
 
             StaticRandom.RandBytes(bytes);
-            Tsid tsid2 = Tsid.From(bytes);
-            Tsid tsid3 = Tsid.From(bytes);
-            BigInteger number2 = new BigInteger(bytes, true, true);
-            BigInteger number3 = new BigInteger(bytes, true, true);
+            var tsid2 = Tsid.From(bytes);
+            var tsid3 = Tsid.From(bytes);
+            var number2 = new BigInteger(bytes, true, true);
+            var number3 = new BigInteger(bytes, true, true);
 
             // // compare numerically
             (number1.CompareTo(number2) > 0).Should().Be(tsid1.CompareTo(tsid2) > 0);
@@ -457,19 +456,19 @@ public class TsidTest
     public void TestHashCode()
     {
         // invoked on the same object
-        for (int i = 0; i < LoopMax; i++)
+        for (var i = 0; i < LoopMax; i++)
         {
-            long number = StaticRandom.NextLong();
-            Tsid tsid1 = Tsid.From(number);
+            var number = StaticRandom.NextLong();
+            var tsid1 = Tsid.From(number);
             tsid1.GetHashCode().Should().Be(tsid1.GetHashCode());
         }
 
         // invoked on two equal objects
-        for (int i = 0; i < LoopMax; i++)
+        for (var i = 0; i < LoopMax; i++)
         {
-            long number = StaticRandom.NextLong();
-            Tsid tsid1 = Tsid.From(number);
-            Tsid tsid2 = Tsid.From(number);
+            var number = StaticRandom.NextLong();
+            var tsid1 = Tsid.From(number);
+            var tsid2 = Tsid.From(number);
             tsid1.GetHashCode().Should().Be(tsid2.GetHashCode());
         }
     }
@@ -480,19 +479,19 @@ public class TsidTest
         const int maxTsid = 1024;
         const int maxLoop = 10000;
 
-        Tsid[] list = new Tsid[maxLoop];
+        var list = new Tsid[maxLoop];
 
-        for (int i = 0; i < maxLoop; i++)
+        for (var i = 0; i < maxLoop; i++)
         {
             // can generate up to 1024 per msec
             list[i] = TsidCreator.GetTsid4096();
         }
 
-        int n = 0;
+        var n = 0;
         long prevTime = 0;
-        for (int i = 0; i < maxLoop; i++)
+        for (var i = 0; i < maxLoop; i++)
         {
-            long time = list[i].GetTime();
+            var time = list[i].GetTime();
             if (time != prevTime)
             {
                 n = 0;

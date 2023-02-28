@@ -20,9 +20,9 @@ namespace TSID.Creator.NET;
 public class RandomGenerators
 {
     private readonly RandomNumberGenerator _cryptographicallySecureRandomNumberGenerator;
-    private readonly Random _insecureRandomNumberGenerator;
+    private readonly Random _pseudoRandomNumberGenerator;
     protected RandomGenerators(RandomNumberGenerator rng) => _cryptographicallySecureRandomNumberGenerator = rng;
-    protected RandomGenerators() => _insecureRandomNumberGenerator = Random.Shared;
+    protected RandomGenerators() => _pseudoRandomNumberGenerator = Random.Shared;
     
     public RandomNumberGenerator GetCryptographicallySecureRandomNumberGeneratorOrThrow()
     {
@@ -33,9 +33,9 @@ public class RandomGenerators
     
     public Random GetSimpleRandomNumberGeneratorOrThrow()
     {
-        if (_insecureRandomNumberGenerator == null)
+        if (_pseudoRandomNumberGenerator == null)
             throw new InvalidOperationException("Cannot get insecure random number generator when using secure random number generator");
-        return _insecureRandomNumberGenerator;
+        return _pseudoRandomNumberGenerator;
     }
 
     public static RandomGenerators OfCryptographicallySecureRandom() => new RandomGenerators(RandomNumberGenerator.Create());
@@ -44,20 +44,15 @@ public class RandomGenerators
     
     public bool IsCryptographicallySecure() => _cryptographicallySecureRandomNumberGenerator != null;
 
-    public int NextInt()
+    public int NextInt(int maxValue = int.MaxValue)
     {
         if (IsCryptographicallySecure())
         {
-            // var randomNumber = new byte[32];
-            // var rng = GetCryptographicallySecureRandomNumberGeneratorOrThrow();
-            // rng.GetBytes(randomNumber);
-            // return BitConverter.ToInt32(randomNumber, 0);
-
             // This method is static so it's common for all overriders of RandomNumberGenerator
-            return RandomNumberGenerator.GetInt32(int.MaxValue); 
+            return RandomNumberGenerator.GetInt32(maxValue); 
         }
         
-        return GetSimpleRandomNumberGeneratorOrThrow().Next();
+        return GetSimpleRandomNumberGeneratorOrThrow().Next(maxValue);
     }
     
     public byte[] NextBytes(int length)

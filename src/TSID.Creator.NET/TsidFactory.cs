@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace TSID.Creator.NET;
+﻿namespace TSID.Creator.NET;
 
 ///<summary>
 /// A factory that actually generates Time-Sorted Unique Identifiers (TSID).
@@ -118,7 +116,7 @@ public sealed class TsidFactory
         _node = builder.GetNode() & _nodeMask;
 
         // finally, initialize internal state
-        _lastTime = _clock.FrozenMilliSeconds ?? 
+        _lastTime = _clock.FrozenMilliSeconds?.Invoke() ?? 
                     DateTimeOffset.UtcNow.ToOffset(_clock.TimeZoneInfo.BaseUtcOffset).ToUnixTimeMilliseconds();
         
         _counter = GetRandomCounter();
@@ -229,7 +227,7 @@ public sealed class TsidFactory
     /// </summary>
     private long GetTime()
     {
-        var time  = _clock.FrozenMilliSeconds ?? 
+        var time  = _clock.FrozenMilliSeconds?.Invoke() ?? 
                     DateTimeOffset.UtcNow.ToOffset(_clock.TimeZoneInfo.BaseUtcOffset).ToUnixTimeMilliseconds();
 
         if (time <= _lastTime)

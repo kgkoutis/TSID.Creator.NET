@@ -7,20 +7,20 @@ public class TsidBaseNTest
 {
     [Fact]
     public void TestBase10() {
-        int radix = 10;
-        string[][] list = Base10;
+        const int radix = 10;
+        var list = Base10;
 
-        for (int i = 0; i < list.Length; i++)
+        for (var i = 0; i < list.Length; i++)
         {
 	        var hex = list[i][0];
 	        var number = list[i][1];
 	        var c = hex[0];
 	        hex = c >= '8' ? "0" + hex : hex;
-	        BigInteger bigInteger = BigInteger.Parse(hex, NumberStyles.HexNumber);
-	        long longValue = bigInteger.ToLongValueJavaStyle();
-	        Tsid tsid = new Tsid(longValue);
-	        string encoded = tsid.Encode(radix);
-            Tsid decoded = Tsid.Decode(list[i][1], radix);
+	        var bigInteger = BigInteger.Parse(hex, NumberStyles.HexNumber);
+	        var longValue = bigInteger.ToLongValueJavaStyle();
+	        var tsid = new Tsid(longValue);
+	        var encoded = tsid.Encode(radix);
+            var decoded = Tsid.Decode(list[i][1], radix);
             
             encoded.Should().Be(number);
             decoded.Should().Be(tsid);
@@ -29,19 +29,19 @@ public class TsidBaseNTest
     
     [Fact]
     public void TestBase43() {
-	    int radix = 43;
-	    string[][] list = BASE43;
-	    for (int i = 0; i < list.Length; i++)
+	    const int radix = 43;
+	    var list = Base43;
+	    for (var i = 0; i < list.Length; i++)
 	    {
 		    var hex = list[i][0];
 		    var number = list[i][1];
 		    var c = hex[0];
 		    hex = c >= '8' ? "0" + hex : hex;
-		    BigInteger bigInteger = BigInteger.Parse(hex, NumberStyles.HexNumber);
-		    long longValue = bigInteger.ToLongValueJavaStyle();
-		    Tsid tsid = new Tsid(longValue);
-		    string encoded = tsid.Encode(radix);
-		    Tsid decoded = Tsid.Decode(list[i][1], radix);
+		    var bigInteger = BigInteger.Parse(hex, NumberStyles.HexNumber);
+		    var longValue = bigInteger.ToLongValueJavaStyle();
+		    var tsid = new Tsid(longValue);
+		    var encoded = tsid.Encode(radix);
+		    var decoded = Tsid.Decode(list[i][1], radix);
             
 		    encoded.Should().Be(number);
 		    decoded.Should().Be(tsid);
@@ -50,19 +50,19 @@ public class TsidBaseNTest
     
     [Fact]
     public void TestBase62() {
-	    int radix = 62;
-	    string[][] list = BASE62;
-	    for (int i = 0; i < list.Length; i++)
+	    const int radix = 62;
+	    var list = Base62;
+	    for (var i = 0; i < list.Length; i++)
 	    {
 		    var hex = list[i][0];
 		    var number = list[i][1];
 		    var c = hex[0];
 		    hex = c >= '8' ? "0" + hex : hex;
-		    BigInteger bigInteger = BigInteger.Parse(hex, NumberStyles.HexNumber);
-		    long longValue = bigInteger.ToLongValueJavaStyle();
-		    Tsid tsid = new Tsid(longValue);
-		    string encoded = tsid.Encode(radix);
-		    Tsid decoded = Tsid.Decode(list[i][1], radix);
+		    var bigInteger = BigInteger.Parse(hex, NumberStyles.HexNumber);
+		    var longValue = bigInteger.ToLongValueJavaStyle();
+		    var tsid = new Tsid(longValue);
+		    var encoded = tsid.Encode(radix);
+		    var decoded = Tsid.Decode(list[i][1], radix);
             
 		    encoded.Should().Be(number);
 		    decoded.Should().Be(tsid);
@@ -71,9 +71,9 @@ public class TsidBaseNTest
      
     [Fact]
     public void TestArgumentException() {
-	    Action act = () =>
+	    var act = () =>
 	    {
-		    string str = Tsid.Fast().Encode(62);
+		    var str = Tsid.Fast().Encode(62);
 		    Tsid.Decode(str, 62);
 	    };
 	    act.Should().NotThrow();
@@ -1139,7 +1139,7 @@ public class TsidBaseNTest
 			new[]{ "a78ab18bd4011cf4", "12072656965235449076" } //
 	};
 
-	private static readonly string[][] BASE43 = new[] { //
+	private static readonly string[][] Base43 = new[] { //
 			new[]{ "0000000000000000", "000000000000" }, //
 			new[]{ "ffffffffffffffff", "JaO7KT4W5fAe" }, //
 			new[]{ "1eb4faef67ad493e", "2GGLeYb80GIK" }, //
@@ -2144,7 +2144,7 @@ public class TsidBaseNTest
 			new[]{ "d49db6d1e6d051c4", "GKd66Qe0FLfC" } //
 	};
 
-	private static readonly string[][] BASE62 = new[] { //
+	private static readonly string[][] Base62 = new[] { //
 			new[]{ "0000000000000000", "00000000000" }, //
 			new[]{ "ffffffffffffffff", "LygHa16AHYF" }, //
 			new[]{ "2133fb480623f824", "2qjozYFz4T6" }, //

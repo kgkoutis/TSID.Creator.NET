@@ -7,77 +7,6 @@ namespace TSID.Creator.NET;
 [Serializable]
 public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, IComparable
 {
-	public int CompareTo(Tsid other)
-	{
-		// return other == null ? 1 : _number.CompareTo(other._number);
-		long a = _number + long.MinValue;
-		long b = other._number + long.MinValue;
-
-		if (a > b)
-			return 1;
-		else if (a < b)
-			return -1;
-
-		return 0;
-	}
-
-	public int CompareTo(object? obj)
-	{
-		if (ReferenceEquals(null, obj)) return 1;
-		if (ReferenceEquals(this, obj)) return 0;
-		return obj is Tsid other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(Tsid)}");
-	}
-
-	public static bool operator <(Tsid left, Tsid right)
-	{
-		return Comparer<Tsid>.Default.Compare(left, right) < 0;
-	}
-
-	public static bool operator >(Tsid left, Tsid right)
-	{
-		return Comparer<Tsid>.Default.Compare(left, right) > 0;
-	}
-
-	public static bool operator <=(Tsid left, Tsid right)
-	{
-		return Comparer<Tsid>.Default.Compare(left, right) <= 0;
-	}
-
-	public static bool operator >=(Tsid left, Tsid right)
-	{
-		return Comparer<Tsid>.Default.Compare(left, right) >= 0;
-	}
-
-	public bool Equals(Tsid other)
-	{
-		if (other == null)
-			return false;
-		if (other.GetType() != typeof(Tsid))
-			return false;
-		
-		return _number == other._number;
-	}
-
-	public override bool Equals(object? obj)
-	{
-		return ReferenceEquals(this, obj) || obj is Tsid other && Equals(other);
-	}
-
-	public override int GetHashCode()
-	{
-		return (int) (_number ^ (_number >>> 32));
-	}
-
-	public static bool operator ==(Tsid left, Tsid right)
-	{
-		return Equals(left, right);
-	}
-
-	public static bool operator !=(Tsid left, Tsid right)
-	{
-		return !Equals(left, right);
-	}
-
 	private static readonly long SerialVersionUid = -5446820982139116297;
 
 	private Tsid(SerializationInfo info, StreamingContext context)
@@ -661,6 +590,76 @@ public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, ICompar
 		return true;
 	}
 
+	public int CompareTo(Tsid other)
+	{
+		// return other == null ? 1 : _number.CompareTo(other._number);
+		long a = _number + long.MinValue;
+		long b = other._number + long.MinValue;
+
+		if (a > b)
+			return 1;
+		else if (a < b)
+			return -1;
+
+		return 0;
+	}
+
+	public int CompareTo(object? obj)
+	{
+		if (ReferenceEquals(null, obj)) return 1;
+		if (ReferenceEquals(this, obj)) return 0;
+		return obj is Tsid other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(Tsid)}");
+	}
+
+	public static bool operator <(Tsid left, Tsid right)
+	{
+		return Comparer<Tsid>.Default.Compare(left, right) < 0;
+	}
+
+	public static bool operator >(Tsid left, Tsid right)
+	{
+		return Comparer<Tsid>.Default.Compare(left, right) > 0;
+	}
+
+	public static bool operator <=(Tsid left, Tsid right)
+	{
+		return Comparer<Tsid>.Default.Compare(left, right) <= 0;
+	}
+
+	public static bool operator >=(Tsid left, Tsid right)
+	{
+		return Comparer<Tsid>.Default.Compare(left, right) >= 0;
+	}
+
+	public bool Equals(Tsid other)
+	{
+		if (other == null)
+			return false;
+		if (other.GetType() != typeof(Tsid))
+			return false;
+		
+		return _number == other._number;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		return ReferenceEquals(this, obj) || obj is Tsid other && Equals(other);
+	}
+
+	public override int GetHashCode()
+	{
+		return (int) (_number ^ (_number >>> 32));
+	}
+
+	public static bool operator ==(Tsid left, Tsid right)
+	{
+		return Equals(left, right);
+	}
+
+	public static bool operator !=(Tsid left, Tsid right)
+	{
+		return !Equals(left, right);
+	}
 
 	public static class BaseN
 	{
