@@ -1,3 +1,4 @@
+using TSID.Creator.NET.Extensions;
 using TSID.Creator.NET.Tests.Unit.Extensions;
 
 namespace TSID.Creator.NET.Tests.Unit;
@@ -17,7 +18,7 @@ public class TsidTest
     {
         for (var i = 0; i < LoopMax; i++)
         {
-            var number0 = StaticRandom.NextLong();
+            var number0 = StaticRandom.Instance.NextLong();
             var bytes = new byte[8];
             using (var stream = new MemoryStream())
             {
@@ -38,7 +39,7 @@ public class TsidTest
     {
         for (var i = 0; i < LoopMax; i++)
         {
-            var number = StaticRandom.NextLong(0, long.MaxValue);
+            var number = StaticRandom.Instance.NextLong(0, long.MaxValue);
             var bytes = new byte[8];
             using (var stream = new MemoryStream())
             {
@@ -60,7 +61,7 @@ public class TsidTest
     {
         for (var i = 0; i < LoopMax; i++)
         {
-            var number0 = StaticRandom.NextLong();
+            var number0 = StaticRandom.Instance.NextLong();
             var string0 = ToString(number0);
             var number1 = Tsid.From(string0).ToLong();
             number0.Should().Be(number1);
@@ -72,7 +73,7 @@ public class TsidTest
     {
         for (var i = 0; i < LoopMax; i++)
         {
-            var number = StaticRandom.NextLong();
+            var number = StaticRandom.Instance.NextLong();
             var string0 = ToString(number);
             var string1 = Tsid.From(number).ToString();
             string0.Should().Be(string1);
@@ -84,7 +85,7 @@ public class TsidTest
     {
         for (var i = 0; i < LoopMax; i++)
         {
-            var number = StaticRandom.NextLong();
+            var number = StaticRandom.Instance.NextLong();
             var string0 = ToString(number).ToLower();
             var string1 = Tsid.From(number).ToLower();
             string0.Should().Be(string1);
@@ -225,7 +226,7 @@ public class TsidTest
     {
         for (var i = 0; i < LoopMax; i++)
         {
-            var number = StaticRandom.NextLong();
+            var number = StaticRandom.Instance.NextLong();
             var tsid = Tsid.From(number);
 
             var time0 = number >>> RandomBits;
@@ -240,7 +241,7 @@ public class TsidTest
     {
         for (var i = 0; i < LoopMax; i++)
         {
-            var number = StaticRandom.NextLong();
+            var number = StaticRandom.Instance.NextLong();
             var tsid = Tsid.From(number);
 
             var random0 = number << TimeBits >>> TimeBits;
@@ -398,7 +399,7 @@ public class TsidTest
 
         for (var i = 0; i < LoopMax; i++)
         {
-            StaticRandom.RandBytes(bytes);
+            StaticRandom.Instance.NextBytes(bytes);
             var tsid1 = Tsid.From(bytes);
             var tsid2 = Tsid.From(bytes);
             tsid1.Should().BeEquivalentTo(tsid2);
@@ -426,16 +427,16 @@ public class TsidTest
 
         for (var i = 0; i < LoopMax; i++)
         {
-            StaticRandom.RandBytes(bytes);
+            StaticRandom.Instance.NextBytes(bytes);
             var tsid1 = Tsid.From(bytes);
             var vOut = BitConverter.ToInt64(bytes, 0);
-            var number1 = new BigInteger(bytes, true, true);
+            var number1 = bytes.ToUnsignedBigEndianBigInteger();
 
-            StaticRandom.RandBytes(bytes);
+            StaticRandom.Instance.NextBytes(bytes);
             var tsid2 = Tsid.From(bytes);
             var tsid3 = Tsid.From(bytes);
-            var number2 = new BigInteger(bytes, true, true);
-            var number3 = new BigInteger(bytes, true, true);
+            var number2 = bytes.ToUnsignedBigEndianBigInteger();
+            var number3 = bytes.ToUnsignedBigEndianBigInteger();
 
             // // compare numerically
             (number1.CompareTo(number2) > 0).Should().Be(tsid1.CompareTo(tsid2) > 0);
@@ -458,7 +459,7 @@ public class TsidTest
         // invoked on the same object
         for (var i = 0; i < LoopMax; i++)
         {
-            var number = StaticRandom.NextLong();
+            var number = StaticRandom.Instance.NextLong();
             var tsid1 = Tsid.From(number);
             tsid1.GetHashCode().Should().Be(tsid1.GetHashCode());
         }
@@ -466,7 +467,7 @@ public class TsidTest
         // invoked on two equal objects
         for (var i = 0; i < LoopMax; i++)
         {
-            var number = StaticRandom.NextLong();
+            var number = StaticRandom.Instance.NextLong();
             var tsid1 = Tsid.From(number);
             var tsid2 = Tsid.From(number);
             tsid1.GetHashCode().Should().Be(tsid2.GetHashCode());

@@ -1,6 +1,7 @@
 ﻿TSID Creator .NET
 ======================================================
 A .NET library for generating Time-Sorted Unique Identifiers (TSID).
+Compatible with .NET Standard 2.0/.NET Standard 2.1.
 
 It brings together ideas from [Twitter's Snowflake](https://github.com/twitter-archive/snowflake/tree/snowflake-2010) and [ULID Spec](https://github.com/ulid/spec).
 

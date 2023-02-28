@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using TSID.Creator.NET.Extensions;
 
 namespace TSID.Creator.NET;
 
@@ -22,7 +23,7 @@ public class RandomGenerators
     private readonly RandomNumberGenerator _cryptographicallySecureRandomNumberGenerator;
     private readonly Random _pseudoRandomNumberGenerator;
     protected RandomGenerators(RandomNumberGenerator rng) => _cryptographicallySecureRandomNumberGenerator = rng;
-    protected RandomGenerators() => _pseudoRandomNumberGenerator = Random.Shared;
+    protected RandomGenerators() => _pseudoRandomNumberGenerator = StaticRandom.Instance;
     
     public RandomNumberGenerator GetCryptographicallySecureRandomNumberGeneratorOrThrow()
     {
@@ -48,8 +49,12 @@ public class RandomGenerators
     {
         if (IsCryptographicallySecure())
         {
-            // This method is static so it's common for all overriders of RandomNumberGenerator
-            return RandomNumberGenerator.GetInt32(maxValue); 
+            var rngBytes = new byte[4];
+            RandomNumberGenerator.Create().GetBytes(rngBytes);
+            var myInt = BitConverter.ToInt32(rngBytes, 0);
+            if (myInt < 0)
+                myInt = 0 - myInt; // Make it positive
+            return myInt;
         }
         
         return GetSimpleRandomNumberGeneratorOrThrow().Next(maxValue);

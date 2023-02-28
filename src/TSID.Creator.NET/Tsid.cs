@@ -354,7 +354,7 @@ public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, ICompar
 		return _number & RandomMask;
 	}
 
-	public static bool IsValid(string? str)
+	public static bool IsValid(string str)
 	{
 		return str != null && IsValidCharArray(str.ToCharArray());
 	}
@@ -604,7 +604,7 @@ public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, ICompar
 		return 0;
 	}
 
-	public int CompareTo(object? obj)
+	public int CompareTo(object obj)
 	{
 		if (ReferenceEquals(null, obj)) return 1;
 		if (ReferenceEquals(this, obj)) return 0;
@@ -641,7 +641,7 @@ public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, ICompar
 		return _number == other._number;
 	}
 
-	public override bool Equals(object? obj)
+	public override bool Equals(object obj)
 	{
 		return ReferenceEquals(this, obj) || obj is Tsid other && Equals(other);
 	}
@@ -669,14 +669,14 @@ public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, ICompar
 		public static string Encode(Tsid tsid, int @base)
 		{
 			const int longSize = 64;
-			var x =  new BigInteger(tsid.ToBytes(), true, true);
+			var x = tsid.ToBytes().ToUnsignedBigEndianBigInteger();
 			var radix = BigInteger.Parse(@base.ToString());
 			var length = (int)Math.Ceiling(longSize / (Math.Log(@base) / Math.Log(2)));
 			var b = length;
 			var buffer = new char[length];
 			while (x.CompareTo(BigInteger.Zero) > 0)
 			{
-				var (quotient, remainder) = BigInteger.DivRem(x, radix);
+				var quotient = BigInteger.DivRem(x, radix, out var remainder);
 				buffer[--b] = Alphabet[remainder.ToIntValueJavaStyle()];
 				x = quotient;
 			}
@@ -721,7 +721,7 @@ public struct Tsid : ISerializable, IEquatable<Tsid>, IComparable<Tsid>, ICompar
 
 	private static class LazyHolder
 	{
-		private static int _counter = Random.Shared.Next();
+		private static int _counter = StaticRandom.Instance.Next();
 
 		public static int IncrementAndGet()
 		{

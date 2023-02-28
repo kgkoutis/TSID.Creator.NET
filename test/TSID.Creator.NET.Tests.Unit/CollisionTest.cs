@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using TSID.Creator.NET.Tests.Unit.Extensions;
+using TSID.Creator.NET.Extensions;
 
 namespace TSID.Creator.NET.Tests.Unit;
 
@@ -7,7 +7,7 @@ public class CollisionTest
 {
     private static TsidFactory NewFactory(int nodeBits)
     {
-        return TsidFactory.GetBuilder().WithRandomFunction(StaticRandom.Rand)
+        return TsidFactory.GetBuilder().WithRandomFunction(StaticRandom.Instance.Next)
             .WithNodeBits(nodeBits) // 8 bits: 256 nodes; 10 bits: 1024 nodes...
             .Build();
     }

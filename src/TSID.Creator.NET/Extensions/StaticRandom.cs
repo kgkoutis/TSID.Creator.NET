@@ -1,21 +1,24 @@
-﻿namespace TSID.Creator.NET.Tests.Unit.Extensions;
+﻿namespace TSID.Creator.NET.Extensions;
 
-public static class StaticRandom
+
+public class StaticRandom : Random
 {
+    public static StaticRandom Instance { get; } = new();
+    
     private static int _seed = Environment.TickCount;
 
     private static readonly ThreadLocal<Random> Random = new(() => new Random(Interlocked.Increment(ref _seed)));
 
-    public static int Rand()
+    public int Next()
     {
         return Random.Value.Next();
     }
 
-    public static void RandBytes(byte[] bytes)
+    public void NextBytes(byte[] bytes)
     {
         Random.Value.NextBytes(bytes);
     }
-    public static long NextLong(long? min = default, long? max = default)
+    public long NextLong(long? min = default, long? max = default)
     {
         return min switch
         {

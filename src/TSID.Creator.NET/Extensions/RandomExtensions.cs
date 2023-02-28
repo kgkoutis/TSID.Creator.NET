@@ -1,6 +1,6 @@
-﻿namespace TSID.Creator.NET.Tests.Unit.Extensions;
+﻿namespace TSID.Creator.NET.Extensions;
 
-public static class RandomExtensionMethods
+public static class RandomExtension
 {
     /// <summary>
     /// Returns a random long from min (inclusive) to max (exclusive)

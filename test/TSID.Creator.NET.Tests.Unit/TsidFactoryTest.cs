@@ -1,4 +1,5 @@
-﻿using TSID.Creator.NET.Tests.Unit.Extensions;
+﻿using TSID.Creator.NET.Extensions;
+using TSID.Creator.NET.Tests.Unit.Extensions;
 
 namespace TSID.Creator.NET.Tests.Unit;
 
@@ -52,7 +53,7 @@ public class TsidFactoryTest : IDisposable {
 		for (var i = 0; i < LoopMax; i++) {
 
 			// instantiate a factory with a Clock that returns a fixed value
-			var random = StaticRandom.NextLong(min: 0, max: bound);
+			var random = StaticRandom.Instance.NextLong(min: 0, max: bound);
 			var fixedRandomNumber = random + Tsid.TsidEpoch; // avoid dates before 2020
 			long Millis() => fixedRandomNumber;
 			var clock = new Clock(TimeZoneInfo.Utc, Millis); // simulate a frozen clock  
@@ -72,7 +73,7 @@ public class TsidFactoryTest : IDisposable {
 		for (var i = 0; i < LoopMax; i++) {
 
 			// instantiate a factory with a Clock that returns a fixed value
-			var random = StaticRandom.NextLong(min: 0, max: bound);
+			var random = StaticRandom.Instance.NextLong(min: 0, max: bound);
 			var fixedRandomNumber = random + Tsid.TsidEpoch; // avoid dates before 2020
 			long Millis() => fixedRandomNumber;
 			var clock = new Clock(TimeZoneInfo.Utc, Millis); // simulate a frozen clock 
@@ -119,7 +120,7 @@ public class TsidFactoryTest : IDisposable {
 				const int bits = TsidFactory.NodeBits1024;
 				var shif = Tsid.RandomBits - bits;
 				var mask = ((1 << bits) - 1);
-				var node = StaticRandom.Rand() & mask;
+				var node = StaticRandom.Instance.Next() & mask;
 				var factory = new TsidFactory(node);
 				(node == ((factory.Create().GetRandom() >>> shif) & mask)).Should().BeTrue();
 			}
@@ -129,7 +130,7 @@ public class TsidFactoryTest : IDisposable {
 				const int bits = TsidFactory.NodeBits1024;
 				var shif = Tsid.RandomBits - bits;
 				var mask = ((1 << bits) - 1);
-				var node = StaticRandom.Rand() & mask;
+				var node = StaticRandom.Instance.Next() & mask;
 				Environment.SetEnvironmentVariable(TsidFactory.Settings.Node, node.ToString());
 				var factory = new TsidFactory();
 				(node == ((factory.Create().GetRandom() >>> shif) & mask)).Should().BeTrue();
@@ -140,7 +141,7 @@ public class TsidFactoryTest : IDisposable {
 				const int bits = TsidFactory.NodeBits1024;
 				var shif = Tsid.RandomBits - bits;
 				var mask = ((1 << bits) - 1);
-				var node = StaticRandom.Rand() & mask;
+				var node = StaticRandom.Instance.Next() & mask;
 				var factory = TsidFactory.GetBuilder().WithNode(node).Build();
 				(node == ((factory.Create().GetRandom() >>> shif) & mask)).Should().BeTrue();
 			}
@@ -150,7 +151,7 @@ public class TsidFactoryTest : IDisposable {
 				const int bits = TsidFactory.NodeBits256;
 				var shif = Tsid.RandomBits - bits;
 				var mask = ((1 << bits) - 1);
-				var node = StaticRandom.Rand() & mask;
+				var node = StaticRandom.Instance.Next() & mask;
 				var factory = TsidFactory.NewInstance256(node);
 				(node == ((factory.Create().GetRandom() >>> shif) & mask)).Should().BeTrue();
 			}
@@ -160,7 +161,7 @@ public class TsidFactoryTest : IDisposable {
 				const int bits = TsidFactory.NodeBits1024;
 				var shif = Tsid.RandomBits - bits;
 				var mask = ((1 << bits) - 1);
-				var node = StaticRandom.Rand() & mask;
+				var node = StaticRandom.Instance.Next() & mask;
 				var factory = TsidFactory.NewInstance1024(node);
 				(node == ((factory.Create().GetRandom() >>> shif) & mask)).Should().BeTrue();
 			}
@@ -170,7 +171,7 @@ public class TsidFactoryTest : IDisposable {
 				const int bits = TsidFactory.NodeBits4096;
 				var shif = Tsid.RandomBits - bits;
 				var mask = ((1 << bits) - 1);
-				var node = StaticRandom.Rand() & mask;
+				var node = StaticRandom.Instance.Next() & mask;
 				var factory = TsidFactory.NewInstance4096(node);
 				(node == ((factory.Create().GetRandom() >>> shif) & mask)).Should().BeTrue();
 			}
@@ -233,7 +234,7 @@ public class TsidFactoryTest : IDisposable {
 	
 	 		Func<int, byte[]> function2 = (int length) => {
 	 			var bytes = new byte[length];
-	 			StaticRandom.RandBytes(bytes);
+	 			StaticRandom.Instance.NextBytes(bytes);
 	 			return bytes;
 			};
 	 		var factory2 = TsidFactory.GetBuilder().WithRandomFunction(function2).Build();
@@ -350,7 +351,7 @@ public class TsidFactoryTest : IDisposable {
 		for (var i = 0; i < 10; i++)
 		{
 			var bytes = new byte[IntegerBytes];
-			StaticRandom.RandBytes(bytes);
+			StaticRandom.Instance.NextBytes(bytes);
 			var number = BitConverter.ToInt32(bytes.Reverse().ToArray());
 			TsidFactory.IRandom random = new TsidFactory.ByteRandom((x) => bytes);
 			random.NextInt().Should().Be(number);
@@ -362,7 +363,7 @@ public class TsidFactoryTest : IDisposable {
 			var size = IntegerBytes * ints;
 
 			var bytes = new byte[size];
-			StaticRandom.RandBytes(bytes);
+			StaticRandom.Instance.NextBytes(bytes);
 			using var buffer1 = new MemoryStream(bytes.Reverse().ToArray());
 			using var buffer2 = new MemoryStream(bytes.Reverse().ToArray());
 
@@ -387,7 +388,7 @@ public class TsidFactoryTest : IDisposable {
 	 public void TestByteRandomNextBytes() {
 	 	for (var i = 0; i < 10; i++) {
 	 		var bytes = new byte[IntegerBytes];
-	        StaticRandom.RandBytes(bytes);
+	        StaticRandom.Instance.NextBytes(bytes);
 	 		TsidFactory.IRandom random = new TsidFactory.ByteRandom((_) => bytes);
 	        var nextBytes = random.NextBytes(IntegerBytes);
 	        Arrays.ToString(bytes).Should().Be(Arrays.ToString(nextBytes));
@@ -399,7 +400,7 @@ public class TsidFactoryTest : IDisposable {
 	 		var size = IntegerBytes * ints;
 	
 	 		var bytes = new byte[size];
-	        StaticRandom.RandBytes(bytes);
+	        StaticRandom.Instance.NextBytes(bytes);
 	        using var buffer1 = new MemoryStream(bytes); 
 	        using var buffer2 = new MemoryStream(bytes);
 	        TsidFactory.IRandom random = new TsidFactory.ByteRandom((x) =>
@@ -424,7 +425,7 @@ public class TsidFactoryTest : IDisposable {
 	
 		for (var i = 0; i < 10; i++) {
 			var bytes = new byte[IntegerBytes];
-			StaticRandom.RandBytes(bytes);
+			StaticRandom.Instance.NextBytes(bytes);
 			var number = BitConverter.ToInt32(bytes.Reverse().ToArray());
 			TsidFactory.IRandom random = new TsidFactory.IntRandom(() => number);
 			number.Should().Be(random.NextInt());
@@ -436,7 +437,7 @@ public class TsidFactoryTest : IDisposable {
 			var size = IntegerBytes * ints;
 	
 			var bytes = new byte[size];
-			StaticRandom.RandBytes(bytes);
+			StaticRandom.Instance.NextBytes(bytes);
 			using var buffer1 = new MemoryStream(bytes.Reverse().ToArray());
 			using var buffer2 = new MemoryStream(bytes.Reverse().ToArray());
 	
@@ -445,7 +446,6 @@ public class TsidFactoryTest : IDisposable {
 				var octects = new byte[IntegerBytes];
 				buffer1.Read(octects, 0, IntegerBytes);
 				return BitConverter.ToInt32(octects);
-				// return buffer1.getInt();
 			});
 	
 			for (var j = 0; j < ints; j++) {
@@ -461,7 +461,7 @@ public class TsidFactoryTest : IDisposable {
 	
 		for (var i = 0; i < 10; i++) {
 			var bytes = new byte[IntegerBytes];
-			StaticRandom.RandBytes(bytes);
+			StaticRandom.Instance.NextBytes(bytes);
 			var number = BitConverter.ToInt32(bytes.Reverse().ToArray());
 			TsidFactory.IRandom random = new TsidFactory.IntRandom(() => number);
 			Arrays.ToString(bytes).Should().Be(Arrays.ToString(random.NextBytes(IntegerBytes)));
@@ -473,7 +473,7 @@ public class TsidFactoryTest : IDisposable {
 			var size = IntegerBytes * ints;
 	
 			var bytes = new byte[size];
-			StaticRandom.RandBytes(bytes);
+			StaticRandom.Instance.NextBytes(bytes);
 			using var buffer1 = new MemoryStream(bytes.Reverse().ToArray());
 			using var buffer2 = new MemoryStream(bytes.Reverse().ToArray());
 	
@@ -497,7 +497,7 @@ public class TsidFactoryTest : IDisposable {
 	[Fact]
 	public void TestSettingsGetNode() {
 	 	for (var i = 0; i < 100; i++) {
-	 		long number = StaticRandom.Rand();
+	 		long number = StaticRandom.Instance.Next();
 	 		Environment.SetEnvironmentVariable(TsidFactory.Settings.Node, number.ToString());
 	 		var result = (long)TsidFactory.Settings.GetNode();
 	        Environment.SetEnvironmentVariable(TsidFactory.Settings.Node, null);
@@ -508,7 +508,7 @@ public class TsidFactoryTest : IDisposable {
 	[Fact]
 	public void TestSettingsGetNodeCount() {
 	 	for (var i = 0; i < 100; i++) {
-		    long number = StaticRandom.Rand();
+		    long number = StaticRandom.Instance.Next();
 		    Environment.SetEnvironmentVariable(TsidFactory.Settings.NodeCount, number.ToString());
 	        var result = (long)TsidFactory.Settings.GetNodeCount();
 	        Environment.SetEnvironmentVariable(TsidFactory.Settings.NodeCount, null);
